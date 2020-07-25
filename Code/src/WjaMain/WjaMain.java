@@ -56,7 +56,7 @@ public class WjaMain {
         job3.waitForCompletion(true);
     }
 
-    static final int IterationTimes = 35;
+    static final int IterationTimes = 30;
     private static void Task4(String inputPath, String outputPath)
             throws IOException, InterruptedException, ClassNotFoundException
     {
@@ -104,7 +104,7 @@ public class WjaMain {
         Job job4PageRankViewer = Job.getInstance();
         job4PageRankViewer.setJarByClass(WjaMain.class);
         job4PageRankViewer.setNumReduceTasks(1);
-
+        job4PageRankViewer.setSortComparatorClass(Task4PageRankViewer.FloatWritableDescendingComparator.class);
 
         job4PageRankViewer.setMapperClass(Task4PageRankViewer.Task4Mapper.class);
         job4PageRankViewer.setReducerClass(Task4PageRankViewer.Task4Reducer.class);
