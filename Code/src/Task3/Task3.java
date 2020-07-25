@@ -36,7 +36,7 @@ public class Task3 {
         }
     }
 
-    public static class Task3Reducer extends Reducer<Text, Text, Text, Text>
+    public static class Task3Reducer extends Reducer<Text, Text, Text, NullWritable>
     {
         /*
         * @param key firstPerson
@@ -57,7 +57,7 @@ public class Task3 {
                 all = all + Integer.parseInt(value[1]);
             }
 
-            //sb.append(key.toString()+" ");
+            sb.append(key.toString()+" ");
             for(String each : list)
             {
                 String[] value = each.split(",");
@@ -66,7 +66,7 @@ public class Task3 {
                 sb.append(value[0]+":"+String.format("%.5f",ratio)+";");
             }
             //person name1:r1;name2:r2;name3:r3;...
-            context.write(key, new Text(sb.toString()));
+            context.write(new Text(sb.toString()), NullWritable.get());
         }
     }
 }

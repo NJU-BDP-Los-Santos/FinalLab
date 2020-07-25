@@ -1,6 +1,7 @@
 package WjaMain;
 
 import Task3.Task3;
+import Task4.Task4GraphBuilder;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
@@ -15,21 +16,44 @@ public class WjaMain {
     {
         Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-        Job job = Job.getInstance();
-        job.setJarByClass(WjaMain.class);
 
-        job.setMapperClass(Task3.Task3Mapper.class);
-        job.setReducerClass(Task3.Task3Reducer.class);
+        //----------------------Task3-----------------------//
+        /*Job job3 = Job.getInstance();
+        job3.setJarByClass(WjaMain.class);
 
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(Text.class);
+        job3.setMapperClass(Task3.Task3Mapper.class);
+        job3.setReducerClass(Task3.Task3Reducer.class);
 
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);
+        job3.setMapOutputKeyClass(Text.class);
+        job3.setMapOutputValueClass(Text.class);
 
-        FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
-        FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
+        job3.setOutputKeyClass(Text.class);
+        job3.setOutputValueClass(NullWritable.class);
 
-        System.exit(job.waitForCompletion(true)?0:1);
+        //Specify your own path for task3
+        FileInputFormat.addInputPath(job3, new Path(otherArgs[0]));
+        FileOutputFormat.setOutputPath(job3, new Path(otherArgs[1]));
+
+        job3.waitForCompletion(true);*/
+
+        //---------------------Task4------------------------//
+        Job job4GraphBuilder = Job.getInstance();
+        job4GraphBuilder.setJarByClass(WjaMain.class);
+        job4GraphBuilder.setNumReduceTasks(2);
+
+        job4GraphBuilder.setMapperClass(Task4GraphBuilder.Task4Mapper.class);
+        job4GraphBuilder.setReducerClass(Task4GraphBuilder.Task4Reducer.class);
+
+        job4GraphBuilder.setMapOutputKeyClass(Text.class);
+        job4GraphBuilder.setMapOutputValueClass(Text.class);
+
+        job4GraphBuilder.setOutputKeyClass(Text.class);
+        job4GraphBuilder.setOutputValueClass(NullWritable.class);
+
+        //Specify your own path for task4
+        FileInputFormat.addInputPath(job4GraphBuilder, new Path(otherArgs[0]));
+        FileOutputFormat.setOutputPath(job4GraphBuilder, new Path(otherArgs[1]));
+
+        job4GraphBuilder.waitForCompletion(true);
     }
 }
