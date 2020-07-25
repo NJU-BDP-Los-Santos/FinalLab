@@ -17,9 +17,12 @@ public class Task4GraphBuilder {
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
         {
-            String[] strs = value.toString().split(" ");
+            String line = value.toString();
+            if(!line.contains(";")) return;
+            String[] strs = line.split(" ");
             String name = strs[0];
-            String lists = "0.5@"+strs[1];
+            //initialized page rank
+            String lists = "1@"+strs[1];
             context.write(new Text(name+" "+lists), new Text("1"));
         }
     }

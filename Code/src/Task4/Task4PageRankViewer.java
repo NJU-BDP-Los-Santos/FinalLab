@@ -2,7 +2,6 @@ package Task4;
 
 import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -18,8 +17,10 @@ public class Task4PageRankViewer {
         @Override
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
         {
-            String[] strs = value.toString().split("@");
-            String[] nameAndRank = strs[1].split("\\s+");
+            String line = value.toString();
+            if(!line.contains("@")) return;
+            String[] strs = line.split("@");
+            String[] nameAndRank = strs[0].split("\\s+");
             String personName = nameAndRank[0];
             float rank = Float.parseFloat(nameAndRank[1]);
             context.write(new FloatWritable(rank), new Text(personName));
@@ -37,6 +38,15 @@ public class Task4PageRankViewer {
                 String personName = each.toString();
                 context.write(new Text(personName), new Text(String.format("%.5f",pageRank)));
             }
+        }
+    }
+
+    public static class DecFloatWritable extends FloatWritable
+    {
+        @Override
+        public int compareTo(FloatWritable o)
+        {
+            return -super.compareTo(o);
         }
     }
 }

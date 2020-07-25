@@ -15,20 +15,29 @@ public class Task4PageRankIter {
          * value: Person rank@name1:r1;name2:r2;name3:r3; ...
          */
         @Override
-        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException
+        protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException, ArrayIndexOutOfBoundsException
         {
-            String[] strs = value.toString().split("\\s+");
+            String line = value.toString();
+            if(!line.contains("@")) return;
+            String[] strs = line.split("\\s+");
             String personName = strs[0];
             String[] pageRanks = strs[1].split("@");
-            String pageRank = pageRanks[0];
+            double pageRank = Double.parseDouble(pageRanks[0]);
             String[] lists = pageRanks[1].split(";");
             Text textPersonName = new Text(personName);
-            Text textPageRank = new Text(pageRank);
             context.write(textPersonName, new Text(pageRanks[1]));
             for(String each : lists)
             {
                 String[] nameAndRatio = each.split(":");
-                context.write(new Text(nameAndRatio[0]), textPageRank);
+                if(nameAndRatio.length < 2)
+                {
+                    System.out.println("value:"+value);
+                    continue;
+                }
+                double ratio = Double.parseDouble(nameAndRatio[1]);
+                double influence = pageRank * ratio;
+                String strInfluence = String.valueOf(influence);
+                context.write(new Text(nameAndRatio[0]), new Text(strInfluence));
             }
         }
     }
@@ -54,10 +63,11 @@ public class Task4PageRankIter {
                 }
                 else
                 {
+                    if(line == null) continue;
                     pageRank = pageRank + Double.parseDouble(line);
                 }
             }
-            context.write(key, new Text(String.format("%.5f",pageRank)+"@"+outerLinks));
+            context.write(key, new Text(String.valueOf(pageRank)+"@"+outerLinks));
         }
     }
 }

@@ -22,6 +22,7 @@ public class Task3 {
         protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException, NullPointerException
         {
             String interactionTimes = value.toString();
+            if(!interactionTimes.contains("<")) return;
             Pattern pattern = Pattern.compile("(?<=<)[^>]+");
             Matcher matcher = pattern.matcher(interactionTimes);
             String[] nameTimes = interactionTimes.split(">");
@@ -33,6 +34,10 @@ public class Task3 {
             Text newKey = new Text(names[0]);
             Text newValue = new Text(names[1]+","+nameTimes[1]);
             context.write(newKey, newValue);
+            //Symmetrical
+            Text symmetricalKey = new Text(names[1]);
+            Text symmetricalValue = new Text(names[0]+","+nameTimes[1]);
+            context.write(symmetricalKey, symmetricalValue);
         }
     }
 
@@ -63,7 +68,7 @@ public class Task3 {
                 String[] value = each.split(",");
                 double t = Integer.parseInt(value[1]);
                 double ratio = t / all;
-                sb.append(value[0]+":"+String.format("%.5f",ratio)+";");
+                sb.append(value[0]+":"+String.valueOf(ratio)+";");
             }
             //person name1:r1;name2:r2;name3:r3;...
             context.write(new Text(sb.toString()), NullWritable.get());
