@@ -5,11 +5,13 @@ import org.ansj.domain.Term;
 import org.ansj.library.DicLibrary;
 import org.ansj.splitWord.analysis.DicAnalysis;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.mockito.internal.matchers.Null;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -18,7 +20,7 @@ import java.util.List;
 
 public class ReadNovel
 {
-    public static class ReaderMapper extends Mapper<LongWritable, Text, Text, NullWritable>
+    public static class ReaderMapper extends Mapper<LongWritable, Text, Text, IntWritable>
     {
         @Override
         protected void setup(Context context) throws IOException, InterruptedException
@@ -27,7 +29,7 @@ public class ReadNovel
          */
         {
             String nameFile = context.getConfiguration().get("nameFile");
-            FileSystem fileSystem =FileSystem.get(context.getConfiguration());
+//            FileSystem fileSystem =FileSystem.get(context.getConfiguration());
             BufferedReader br = new BufferedReader(new FileReader(nameFile));
             String nameline;
             while((nameline = br.readLine()) != null)
@@ -60,20 +62,46 @@ public class ReadNovel
             String res = sb.length() > 0 ? sb.toString().substring(0,sb.length()-1):"";
             // 去除最后的空格
 //            System.out.println(res);
-            context.write(new Text(res),NullWritable.get());
+            context.write(new Text(res), new IntWritable(1));
         }
     }
 
-    public static class ReaderReducer extends Reducer<Text, NullWritable,Text,NullWritable>
+    public static class ReaderCombiner extends Reducer<Text, IntWritable, Text, IntWritable>
+    {
+        /**
+         * 用来合并同一个 词语-小说 的组
+         * @param key
+         * @param values 同一个 词语-小说 的列表
+         * @param context
+         * @throws IOException
+         * @throws InterruptedException
+         */
+        @Override
+        protected void reduce(Text key, Iterable<IntWritable> values,
+                              Reducer<Text, IntWritable, Text, IntWritable>.Context context) throws IOException, InterruptedException
+        {
+            int total = 0;
+            for(IntWritable value: values)
+            {
+                total = total + value.get();
+            }
+            context.write(key, new IntWritable(total));
+        }
+    }
+
+    public static class ReaderReducer extends Reducer<Text, IntWritable,Text,NullWritable>
     {
         @Override
-        protected void reduce(Text key, Iterable<NullWritable> values, Context context) throws IOException, InterruptedException
+        protected void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
         {
-            for (NullWritable value : values)
+            int count = 0;
+            for (IntWritable value : values)
             {
-                context.write(key,NullWritable.get());
+//                context.write(key,NullWritable.get());
+                count += value.get();
             }
 //            context.write(key,NullWritable.get());
+            context.write(new Text(key.toString() + " TIMES: " + Integer.toString(count)), NullWritable.get());
         }
     }
 }

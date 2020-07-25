@@ -46,6 +46,7 @@ public class Main
             Job job = new Job(conf, "PreProcess");
             job.setJarByClass(Main.class);
             job.setMapperClass(ReadNovel.ReaderMapper.class);
+            job.setCombinerClass(ReadNovel.ReaderCombiner.class);
             job.setReducerClass(ReadNovel.ReaderReducer.class);
 //            job.setCombinerClass(NullPointerException.class);
 //            job.setCombinerClass(CombinerSameWordDoc.class);
@@ -53,6 +54,7 @@ public class Main
             job.setNumReduceTasks(2);
 //            job.setGroupingComparatorClass(XGroup.class);
             job.setOutputKeyClass(Text.class);
+            job.setMapOutputValueClass(IntWritable.class);
             job.setOutputValueClass(NullWritable.class);
             job.setInputFormatClass(TextInputFormat.class);
             FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
