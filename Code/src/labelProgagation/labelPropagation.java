@@ -142,4 +142,30 @@ public class labelPropagation {
 
     }
 
+    public static void labelpropagation(String inputPath, String outputPath) throws Exception
+    {
+        try {
+            Configuration conf = new Configuration();
+
+            Job job = new Job(conf, "Label-Propagation");
+            job.setJarByClass(labelPropagation.class);
+            job.setMapperClass(LabelMapper.class);
+            job.setReducerClass(LabelReducer.class);
+            job.setNumReduceTasks(4);
+            job.setOutputKeyClass(Text.class);
+            job.setOutputValueClass(Text.class);
+//            job.setMapOutputKeyClass(Text.class);
+//            job.setMapOutputValueClass(Text.class);
+            job.setInputFormatClass(TextInputFormat.class);
+            FileInputFormat.addInputPath(job, new Path(inputPath));
+            FileOutputFormat.setOutputPath(job, new Path(outputPath));
+            job.waitForCompletion(true);
+            //System.exit(job.waitForCompletion(true) ? 0 : 1);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }
