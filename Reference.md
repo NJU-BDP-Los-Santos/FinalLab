@@ -11,3 +11,9 @@
 
 **<font color=red>注意！为了保证各个成员写的参考文件可以合并，该文件尽量只进行[add]操作！</font>**
 
+### Gephi：通用网络分析与可视化
+https://www.jianshu.com/p/046a097d2363
+
+### pygexf生成gexf文件
+https://github.com/paulgirard/pygexf
+https://github.com/171860596/pygexf
