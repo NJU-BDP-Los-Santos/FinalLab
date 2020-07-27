@@ -1,10 +1,10 @@
-package labelProgagation;
+package LabelPropagation_iter;
 
-import com.google.inject.internal.cglib.proxy.$Callback;
+import labelProgagation.labelPropagation;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -12,17 +12,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
-import org.apache.hadoop.io.Text;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.StringTokenizer;
+import java.util.*;
 
-public class labelPropagation {
+public class Main {
     public static void main(String[] args) throws Exception
     {
         try {
@@ -33,10 +27,10 @@ public class labelPropagation {
                 System.exit(2);
             }
 
-            Job job = new Job(conf, "Label-Propagation");
-            job.setJarByClass(labelPropagation.class);
-            job.setMapperClass(LabelMapper.class);
-            job.setReducerClass(LabelReducer.class);
+            Job job = new Job(conf, "Label-Propagation-iter");
+            job.setJarByClass(Main.class);
+            job.setMapperClass(Main.LabelMapper.class);
+            job.setReducerClass(Main.LabelReducer.class);
             job.setNumReduceTasks(4);
             job.setOutputKeyClass(Text.class);
             job.setOutputValueClass(Text.class);
@@ -59,9 +53,13 @@ public class labelPropagation {
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String line = value.toString();
 
-            String name = line.split(" ")[0];
-            String nameList = line.split(" ")[1];
-            String label = new String(name);
+            String label_name = line.split("\t")[0];
+            String nameList = line.split("\t")[1];
+            //System.out.println(label_name);
+            String name = label_name.split("#")[1];
+            String label = label_name.split("#")[0];
+
+            //String label = new String(name);
             //System.out.println(label);
             StringTokenizer tokenizer = new StringTokenizer(nameList,";");
             while(tokenizer.hasMoreTokens()){
@@ -141,5 +139,4 @@ public class labelPropagation {
         }
 
     }
-
 }
