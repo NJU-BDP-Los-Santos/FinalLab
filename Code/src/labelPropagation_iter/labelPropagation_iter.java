@@ -1,4 +1,4 @@
-package LabelPropagation_iter;
+package labelPropagation_iter;
 
 
 import org.apache.hadoop.conf.Configuration;
@@ -16,7 +16,7 @@ import org.apache.hadoop.util.GenericOptionsParser;
 import java.io.IOException;
 import java.util.*;
 
-public class Main {
+public class labelPropagation_iter {
     public static void main(String[] args) throws Exception
     {
         try {
@@ -28,9 +28,9 @@ public class Main {
             }
 
             Job job = new Job(conf, "Label-Propagation-iter");
-            job.setJarByClass(Main.class);
-            job.setMapperClass(Main.LabelMapper.class);
-            job.setReducerClass(Main.LabelReducer.class);
+            job.setJarByClass(labelPropagation_iter.class);
+            job.setMapperClass(LabelMapper.class);
+            job.setReducerClass(LabelReducer.class);
             job.setNumReduceTasks(4);
             job.setOutputKeyClass(Text.class);
             job.setOutputValueClass(Text.class);
@@ -138,5 +138,30 @@ public class Main {
             context.write(new Text(target_label + "#" + key.toString()),new Text(nameList));
         }
 
+    }
+
+    public static void labelpropagationiter(String inputPath, String outputPath) throws Exception
+    {
+        try {
+            Configuration conf = new Configuration();
+
+            Job job = new Job(conf, "Label-Propagation-iter");
+            job.setJarByClass(labelPropagation_iter.class);
+            job.setMapperClass(LabelMapper.class);
+            job.setReducerClass(LabelReducer.class);
+            job.setNumReduceTasks(4);
+            job.setOutputKeyClass(Text.class);
+            job.setOutputValueClass(Text.class);
+//            job.setMapOutputKeyClass(Text.class);
+//            job.setMapOutputValueClass(Text.class);
+            job.setInputFormatClass(TextInputFormat.class);
+            FileInputFormat.addInputPath(job, new Path(inputPath));
+            FileOutputFormat.setOutputPath(job, new Path(outputPath));
+            job.waitForCompletion(true);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }
