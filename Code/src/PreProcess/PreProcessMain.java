@@ -1,30 +1,19 @@
 package PreProcess;
 
 
-import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
 //import org.apache.hadoop.mapred.lib.HashPartitioner;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
-import org.mockito.internal.matchers.Null;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.StringTokenizer;
 
 
-public class Main
+public class PreProcessMain
         /**
          * @author GRP
          * @date 2020.7.25
@@ -35,8 +24,8 @@ public class Main
     {
         try {
             Configuration conf = new Configuration();
-            conf.set("nameFile", "./Data/People_List_unique.txt");
             String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
+            conf.set("nameFile", otherArgs[0] + "People_List_unique.txt");
             if (otherArgs.length != 2)
             {
                 System.err.println("Please Use the command: <input path> <output path>");
@@ -44,7 +33,7 @@ public class Main
             }
 
             Job job = new Job(conf, "PreProcess");
-            job.setJarByClass(Main.class);
+            job.setJarByClass(PreProcessMain.class);
             job.setMapperClass(ReadNovel.ReaderMapper.class);
             job.setCombinerClass(ReadNovel.ReaderCombiner.class);
             job.setReducerClass(ReadNovel.ReaderReducer.class);
@@ -57,9 +46,10 @@ public class Main
             job.setMapOutputValueClass(IntWritable.class);
             job.setOutputValueClass(NullWritable.class);
             job.setInputFormatClass(TextInputFormat.class);
-            FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
+            FileInputFormat.addInputPath(job, new Path(otherArgs[0] + "Novel/"));
             FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
-            System.exit(job.waitForCompletion(true) ? 0 : 1);
+//            System.exit(job.waitForCompletion(true) ? 0 : 1);
+            job.waitForCompletion(true);
         }
         catch (Exception e)
         {
