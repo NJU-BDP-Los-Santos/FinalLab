@@ -46,7 +46,7 @@ public class PreProcessMain
             job.setMapOutputValueClass(IntWritable.class);
             job.setOutputValueClass(NullWritable.class);
             job.setInputFormatClass(TextInputFormat.class);
-            FileInputFormat.addInputPath(job, new Path(otherArgs[0] + "Novel/"));
+            FileInputFormat.addInputPath(job, new Path(otherArgs[0] + "wuxia_novels/"));
             FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
 //            System.exit(job.waitForCompletion(true) ? 0 : 1);
             job.waitForCompletion(true);

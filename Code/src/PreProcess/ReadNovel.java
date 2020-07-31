@@ -5,6 +5,7 @@ import org.ansj.domain.Term;
 import org.ansj.library.DicLibrary;
 import org.ansj.splitWord.analysis.DicAnalysis;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
@@ -13,9 +14,11 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.mockito.internal.matchers.Null;
 
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 
 public class ReadNovel
@@ -30,7 +33,8 @@ public class ReadNovel
         {
             String nameFile = context.getConfiguration().get("nameFile");
 //            FileSystem fileSystem =FileSystem.get(context.getConfiguration());
-            BufferedReader br = new BufferedReader(new FileReader(nameFile));
+            BufferedReader br = new BufferedReader(new InputStreamReader(FileSystem.get(context.getConfiguration()).open(new Path(nameFile))));
+//            new InputStreamReader(FileSystem.get(conf).open(new Path(hdfspath)))
             String nameline;
             while((nameline = br.readLine()) != null)
             // 不断读取文件，每一行是一个名字

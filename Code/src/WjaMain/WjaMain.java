@@ -24,8 +24,8 @@ public class WjaMain {
         Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
 
-        CleanTask3(otherArgs[1]);
-        CleanTask4(otherArgs[2]);
+//        CleanTask3(otherArgs[1]);
+//        CleanTask4(otherArgs[2]);
 
         //----------------------Task3-----------------------//
         Task3(otherArgs[0], otherArgs[1]);
@@ -74,7 +74,7 @@ public class WjaMain {
         job4GraphBuilder.setOutputValueClass(NullWritable.class);
 
         FileInputFormat.addInputPath(job4GraphBuilder, new Path(inputPath));
-        FileOutputFormat.setOutputPath(job4GraphBuilder, new Path("outputTask4Iter0/"));
+        FileOutputFormat.setOutputPath(job4GraphBuilder, new Path(outputPath + "Trash/outputTask4Iter0/"));
 
         job4GraphBuilder.waitForCompletion(true);
 
@@ -94,8 +94,8 @@ public class WjaMain {
             job4PageRankIter.setOutputKeyClass(Text.class);
             job4PageRankIter.setOutputValueClass(NullWritable.class);
 
-            FileInputFormat.addInputPath(job4PageRankIter, new Path("outputTask4Iter"+(i-1)+"/"));
-            FileOutputFormat.setOutputPath(job4PageRankIter, new Path("outputTask4Iter"+i+"/"));
+            FileInputFormat.addInputPath(job4PageRankIter, new Path(outputPath + "Trash/outputTask4Iter"+(i-1)+"/"));
+            FileOutputFormat.setOutputPath(job4PageRankIter, new Path(outputPath + "Trash/outputTask4Iter"+i+"/"));
 
             job4PageRankIter.waitForCompletion(true);
         }
@@ -115,8 +115,8 @@ public class WjaMain {
         job4PageRankViewer.setOutputKeyClass(Text.class);
         job4PageRankViewer.setOutputValueClass(Text.class);
 
-        FileInputFormat.addInputPath(job4PageRankViewer, new Path("outputTask4Iter"+IterationTimes+"/"));
-        FileOutputFormat.setOutputPath(job4PageRankViewer, new Path(outputPath));
+        FileInputFormat.addInputPath(job4PageRankViewer, new Path(outputPath + "Trash/outputTask4Iter"+IterationTimes+"/"));
+        FileOutputFormat.setOutputPath(job4PageRankViewer, new Path(outputPath + "Final/"));
 
         job4PageRankViewer.waitForCompletion(true);
     }

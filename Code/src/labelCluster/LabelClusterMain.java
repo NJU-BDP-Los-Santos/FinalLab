@@ -1,8 +1,8 @@
-package rankPRvalue;
+package labelCluster;
+
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -14,9 +14,8 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 import java.io.IOException;
-import java.util.*;
 
-public class Main {
+public class LabelClusterMain {
     public static void main(String[] args) throws Exception
     {
         try {
@@ -27,20 +26,20 @@ public class Main {
                 System.exit(2);
             }
 
-            Job job = new Job(conf, "rank PRvalue");
-            job.setJarByClass(Main.class);
-            job.setSortComparatorClass(DescSort.class);
-            job.setMapperClass(Main.rankMapper.class);
-            job.setReducerClass(Main.rankReducer.class);
+            Job job = new Job(conf, "Label-Cluster");
+            job.setJarByClass(LabelClusterMain.class);
+            job.setMapperClass(LabelMapper.class);
+            job.setReducerClass(LabelReducer.class);
             job.setNumReduceTasks(1);
-            job.setOutputKeyClass(FloatWritable.class);
+            job.setOutputKeyClass(Text.class);
             job.setOutputValueClass(Text.class);
 //            job.setMapOutputKeyClass(Text.class);
 //            job.setMapOutputValueClass(Text.class);
             job.setInputFormatClass(TextInputFormat.class);
             FileInputFormat.addInputPath(job, new Path(otherArgs[0]));
             FileOutputFormat.setOutputPath(job, new Path(otherArgs[1]));
-            System.exit(job.waitForCompletion(true) ? 0 : 1);
+//            System.exit(job.waitForCompletion(true) ? 0 : 1);
+            job.waitForCompletion(true);
         }
         catch (Exception e)
         {
@@ -48,26 +47,30 @@ public class Main {
         }
     }
 
-    public static class rankMapper extends Mapper<Object,Text, FloatWritable,Text>{
+    public static class LabelMapper extends Mapper<LongWritable, Text,Text, Text> {
 
         @Override
-        public void map(Object key,Text value,Context context) throws IOException, InterruptedException{
-            String line=value.toString();
-            String arr[]=line.split("\t");
-            Text name = new Text(arr[0]);
-            FloatWritable prValue = new FloatWritable(Float.parseFloat(arr[1]));
-            context.write(prValue,name);
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            String line = value.toString();
+
+            String label_name = line.split("\t")[0];
+            String nameList = line.split("\t")[1];
+            //System.out.println(label_name);
+            String name = label_name.split("#")[1];
+            String label = label_name.split("#")[0];
+
+            context.write(new Text(label),new Text(name));
+
         }
     }
 
-    public static class rankReducer extends Reducer<FloatWritable, Text, Text, FloatWritable>{
-
+    public static class LabelReducer extends Reducer<Text, Text,Text, Text> {
         @Override
-        public void reduce(FloatWritable key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            for(Text val:values){
-                context.write(val, key);
+        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            for(Text text:values)
+            {
+                context.write(key, text);
             }
         }
     }
-
 }

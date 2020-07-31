@@ -58,11 +58,13 @@ public class labelPropagation {
         @Override
         public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             String line = value.toString();
-
+//            System.out.println(line);
             String name = line.split(" ")[0];
+//            System.out.println(name);
             String nameList = line.split(" ")[1];
             String label = new String(name);
             //System.out.println(label);
+//            StringTokenizer tokens = new StringTokenizer()
             StringTokenizer tokenizer = new StringTokenizer(nameList,";");
             while(tokenizer.hasMoreTokens()){
                 String[] element = tokenizer.nextToken().split(":");

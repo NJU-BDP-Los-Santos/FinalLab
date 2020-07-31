@@ -4,7 +4,7 @@ package task5;
 import labelProgagation.labelPropagation;
 import labelPropagation_iter.labelPropagation_iter;
 
-public class Main {
+public class Task5Main {
     public static void main(String[] args) throws Exception
     {
         try {
@@ -14,12 +14,13 @@ public class Main {
             //    System.err.println("Usage: <in> <out>");
             //    System.exit(2);
             //}
-            String tmpDir = new String("output/tmp/iter_");
+            String tmpDir = new String(args[1] + "tmp/iter_");
             int iterNum = 1;
             labelPropagation iter_1 = new labelPropagation();
 
             String tmp = new String(tmpDir + String.valueOf(iterNum));
             labelPropagation.labelpropagation(args[0], tmp);
+            // args[0] is input path
 
             iterNum += 1;
 
@@ -31,7 +32,7 @@ public class Main {
                 iterNum += 1;
             }
 
-            labelPropagation_iter.labelpropagationiter(tmp, args[1]);
+            labelPropagation_iter.labelpropagationiter(tmp, args[1] + "Final/");
 
         }
         catch (Exception e)

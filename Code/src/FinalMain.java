@@ -3,6 +3,7 @@
 import CoStatistic.CoStatisticMain;
 import PreProcess.PreProcessMain;
 import WjaMain.WjaMain;
+import labelCluster.LabelClusterMain;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.FloatWritable;
@@ -12,6 +13,8 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
+import rankPRvalue.RankPRMain;
+import task5.Task5Main;
 
 public class FinalMain
 {
@@ -35,6 +38,12 @@ public class FinalMain
 
         WjaMain.main(new String[]{output_path + "Task2/", output_path + "Task3/", output_path + "Task4/"});
 
+        Task5Main.task5main(output_path + "Task3/", output_path + "Task5/Final/", output_path + "Task5/Tmp/");
 
+        LabelClusterMain.main(new String[]{output_path + "Task5/Final/", output_path + "Task6/LabelCluster/"});
+
+        RankPRMain.main(new String[]{output_path + "Task4/Final/", output_path + "Task6/RankPR/"});
+
+        System.exit(0);
     }
 }
